@@ -13,6 +13,8 @@ class GameState:
     def __init__(self, json_state: json, the_bots_memory_book: TheBotsMemoryBook):
         self.the_bots_memory_book: TheBotsMemoryBook = the_bots_memory_book
         self.json = json_state
+        if "error" in json_state:
+            raise RuntimeError("Communication Mod rejected command: " + json_state["error"])
         if "game_state" in json_state:
             if "combat_state" in json_state["game_state"]:
                 self.hand: Deck = Deck(json_state["game_state"]["combat_state"]["hand"])
