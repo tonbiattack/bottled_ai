@@ -16,7 +16,7 @@ run_seeds = [
     #'LGZ12EEMFGUK',
 ]
 run_amount = 1
-strategy = PEACEFUL_PUMMELING
+strategy = REQUESTED_STRIKE
 
 if __name__ == "__main__":
     init_log()
