@@ -122,6 +122,27 @@ $mts = 'C:\Program Files (x86)\Steam\steamapps\workshop\content\646570\160506044
 
 起動に失敗した場合は、Communication Mod の 10 秒タイムアウト後に、ゲームフォルダの `communication_mod_errors.log` と ModTheSpire のコンソール出力を確認してください。
 
+### 自動で開始する設定
+
+ゲームの開始と同時に bot も開始する場合は、`%LOCALAPPDATA%\ModTheSpire\CommunicationMod\config.properties` を次の内容にします。
+
+```properties
+command=python ./bottled_ai/main.py
+runAtGameStart=true
+```
+
+`runAtGameStart=false` に戻すと、前節の手動開始へ戻ります。変更後はゲームを再起動します。
+
+### 自動開始の実行確認（2026-08-25）
+
+上記の自動開始設定で ModTheSpire を再起動し、次を確認しました。
+
+- Communication Mod のログに `Received message from external process: ready` が出力された。
+- 子プロセスとして `python ./bottled_ai/main.py` が継続実行された。
+- `bottled_ai/logs/default.log` に `Starting up`、`start Watcher ...`、ゲーム状態の応答が記録された。
+
+この3点がそろえば、外部プロセスの起動だけでなく、bot とゲームの標準入出力による接続も成立しています。
+
 ## 起動失敗の調査記録（2026-08-25）
 
 ### 症状

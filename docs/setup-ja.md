@@ -120,6 +120,8 @@ command=python3 ./bottled_ai/main.py
 
 ## 7. bot を起動する
 
+### 手動で開始する（通常はこちら）
+
 1. ModTheSpire で Slay the Spire を起動します。
 2. ゲームのメインメニューから **Mods** を選択します。
 3. **Communication Mod** を選択します。
@@ -127,6 +129,17 @@ command=python3 ./bottled_ai/main.py
 5. **Start external process** を選択します。[1]
 
 起動すると `main.py` が `PEACEFUL_PUMMELING` 戦略を使用し、`run_amount = 1` の設定でランダム seed のゲームを 1 回開始します。これは現在のリポジトリにある `main.py` の設定に基づく挙動です。特定の seed を使う場合や、実行回数・戦略を変える場合は、`main.py` の `run_seeds`、`run_amount`、`strategy` を編集してください。
+
+### ゲーム起動時に自動で開始する
+
+毎回メニューを操作せず bot を開始したい場合は、同じ `CommunicationMod\config.properties` に次を設定します。
+
+```properties
+command=python ./bottled_ai/main.py
+runAtGameStart=true
+```
+
+`runAtGameStart=true` の場合、Communication Mod が初期化された時点で外部プロセスを開始します。手動開始に戻すときは `runAtGameStart=false` に変更します。設定を変更した後は、ゲームと外部プロセスを終了して ModTheSpire 経由で再起動してください。
 
 ## 8. 起動できない場合の確認順
 
