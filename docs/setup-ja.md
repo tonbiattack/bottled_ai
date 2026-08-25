@@ -99,15 +99,15 @@ Steam Workshop で次の 4 つを購読します。各 mod の導入元は本家
 
 | OS | 設定フォルダ |
 | --- | --- |
-| Windows | `%LOCALAPPDATA%\ModTheSpire\` |
-| macOS | `~/Library/Preferences/ModTheSpire/` |
+| Windows | `%LOCALAPPDATA%\ModTheSpire\CommunicationMod\` |
+| macOS | `~/Library/Preferences/ModTheSpire/CommunicationMod/` |
 
-このフォルダ内の Communication Mod の `config.properties` をテキストエディタで開き、`command` の設定を次のようにします。既存の `command=` 行がある場合は、同じキーを重複させず置き換えてください。
+このフォルダ内の `config.properties` をテキストエディタで開き、`command` の設定を次のようにします。既存の `command=` 行がある場合は、同じキーを重複させず置き換えてください。ModTheSpire 直下の `config.properties` ではなく、`CommunicationMod` サブディレクトリ内のファイルを編集します。
 
 ### Windows
 
 ```properties
-command=python .\\bottled_ai\\main.py
+command=python ./bottled_ai/main.py
 ```
 
 ### macOS

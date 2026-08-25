@@ -54,10 +54,16 @@ mods/
 
 ### 4. Communication Mod の外部プロセス設定
 
-`%LOCALAPPDATA%\ModTheSpire\config.properties` に次の 1 行を設定しました。
+Communication Mod が読む設定ファイルは、ModTheSpire 直下ではなく、次のサブディレクトリ内です。
+
+```text
+%LOCALAPPDATA%\ModTheSpire\CommunicationMod\config.properties
+```
+
+このファイルに次の 1 行を設定します。
 
 ```properties
-command=python .\\bottled_ai\\main.py
+command=python ./bottled_ai/main.py
 ```
 
 この設定により、ゲームのメニューから Communication Mod の外部プロセスを開始すると、ゲームフォルダを基準に `bottled_ai/main.py` が起動します。
@@ -115,3 +121,45 @@ $mts = 'C:\Program Files (x86)\Steam\steamapps\workshop\content\646570\160506044
 この操作はゲーム UI 上で行う必要があります。外部プロセスはゲームとの標準入出力接続を介して通信するため、ゲームなしで `python main.py` だけを直接実行しても bot のランは開始できません。
 
 起動に失敗した場合は、Communication Mod の 10 秒タイムアウト後に、ゲームフォルダの `communication_mod_errors.log` と ModTheSpire のコンソール出力を確認してください。
+
+## 起動失敗の調査記録（2026-08-25）
+
+### 症状
+
+ゲーム内の **Start external process** を複数回実行しても bot は開始せず、ゲームログには次のエラーだけが記録されました。
+
+```text
+ERROR communicationmod.CommunicationMod> Could not start external process.
+```
+
+`communication_mod_errors.log` は 0 バイトで、`bottled_ai/logs/` にも bot の実行ログは作られていませんでした。
+
+### 確認した事実
+
+1. ModTheSpire の起動ログでは BaseMod、StSLib、Communication Mod の読み込み完了を確認しました。したがって mod 未読み込みは原因ではありません。
+2. Python の構文チェックとテストは成功しています。bot が起動してから例外になった証拠もありません。
+3. Communication Mod の JAR を確認すると、`SpireConfig("CommunicationMod", "config", ...)` で設定を開き、取得した `command` を空白で分割して `ProcessBuilder` に渡しています。
+4. 実際に生成されていた `%LOCALAPPDATA%\ModTheSpire\CommunicationMod\config.properties` の内容は次のとおりでした。
+
+   ```properties
+   command=
+   runAtGameStart=false
+   ```
+
+5. 一方で、起動コマンドは誤って `%LOCALAPPDATA%\ModTheSpire\config.properties` に書かれていました。このファイルは Communication Mod の設定としては読まれません。
+
+### 原因
+
+**Communication Mod が参照する `command` が空文字のままでした。** そのため、Python や `main.py` を起動する前に `ProcessBuilder` の生成に失敗し、ゲームログの `Could not start external process.` が出ています。
+
+空のエラーログはこの結論と整合します。Communication Mod はプロセス生成に成功してから子プロセスの標準エラーを `communication_mod_errors.log` へリダイレクトするため、生成前の失敗ではそのファイルに Python の例外は記録されません。
+
+### 対処と再確認手順
+
+1. `%LOCALAPPDATA%\ModTheSpire\CommunicationMod\config.properties` の `command=` を、上記の `command=python ./bottled_ai/main.py` に置き換えます。
+2. ゲームを終了してから ModTheSpire 経由で再起動します。設定は Mod の初期化時に読み込まれます。
+3. **Mods → Communication Mod → Config → Start external process** を実行します。
+4. 成功時は、ゲームログに `Received message from external process: ready` が記録され、`bottled_ai/logs/default.log` が生成されます。
+5. それでも失敗する場合は、`communication_mod_errors.log` の新しい内容を確認します。この段階では Python のエラー出力が残るため、次の切り分けに利用できます。
+
+この調査では設定ファイルを変更していません。上記は、記録時点のログと実装を根拠にした修正手順です。
