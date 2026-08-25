@@ -141,6 +141,34 @@ runAtGameStart=true
 
 `runAtGameStart=true` の場合、Communication Mod が初期化された時点で外部プロセスを開始します。手動開始に戻すときは `runAtGameStart=false` に変更します。設定を変更した後は、ゲームと外部プロセスを終了して ModTheSpire 経由で再起動してください。
 
+### 起動キャラクターを変更する
+
+起動キャラクターは Communication Mod の設定ではなく、`main.py` の `strategy` が決めます。現在の既定値は次のとおりです。
+
+```python
+strategy = PEACEFUL_PUMMELING
+```
+
+`PEACEFUL_PUMMELING` は `Character.WATCHER` を持つ戦略なので、ゲームへは `start Watcher ...` が送られます。Watcher を選ぶための別設定があるのではなく、選択した戦略にキャラクターが紐付いている仕組みです。
+
+`main.py` は以下の戦略を import 済みです。`strategy = ...` の右辺だけを1つ選んで置き換えてください。
+
+| 戦略 | 起動キャラクター |
+| --- | --- |
+| `PEACEFUL_PUMMELING` | Watcher（既定） |
+| `SHIVS_AND_GIGGLES` | Silent |
+| `REQUESTED_STRIKE` | Ironclad |
+| `CLAW_IS_LAW` | Defect |
+| `PWNDER_MY_ORBS` | Defect |
+
+たとえば Silent を使う場合は次のようにします。
+
+```python
+strategy = SHIVS_AND_GIGGLES
+```
+
+戦略にはカード選択・イベント・ポーション・戦闘判断がキャラクター向けに実装されています。`Character.WATCHER` のような値だけを直接書き換えず、対応する戦略を選んでください。`main.py` を変更した後は、動いている外部プロセスを終了してから再起動します。`runAtGameStart=true` の場合はゲーム再起動で反映されます。
+
 ## 8. 起動できない場合の確認順
 
 Communication Mod の外部プロセスには 10 秒のタイムアウトがあります。10 秒程度待っても何も起きない場合は、次の順に確認します。
