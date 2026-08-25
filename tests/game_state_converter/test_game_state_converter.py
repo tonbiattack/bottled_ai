@@ -2,9 +2,15 @@ import unittest
 
 from rs.game.event import Event
 from test_helpers.resources import load_resource_state
+from rs.machine.state import GameState
+from rs.machine.the_bots_memory_book import TheBotsMemoryBook
 
 
 class GameStateConverterTest(unittest.TestCase):
+
+    def test_communication_error_raises_its_message(self):
+        with self.assertRaisesRegex(RuntimeError, 'Invalid argument strike'):
+            GameState({'ready_for_command': True, 'error': 'Invalid argument strike'}, TheBotsMemoryBook())
 
     def test_loading_all_potions(self):
         state = load_resource_state("other/combat_reward_full_potions.json")

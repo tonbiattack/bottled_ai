@@ -143,6 +143,14 @@ runAtGameStart=true
 
 この3点がそろえば、外部プロセスの起動だけでなく、bot とゲームの標準入出力による接続も成立しています。
 
+### 日本語表示での文字化けと終了
+
+ゲーム表示が日本語（`LANGUAGE: JPN`）の環境では、Communication Mod から Python へ渡されるカード名が文字化けすることがあります。文字化けした名前を `choose` コマンドへ渡すと、Communication Mod は無効な引数としてエラー応答を返します。
+
+この環境では `preferences/STSGameplaySettings` とそのバックアップの `LANGUAGE` を `ENG` にしてゲームを再起動し、英語のカード名で通信するようにしました。表示言語の変更は、この bot の名前ベースの判断・コマンド送信を安定させるための回避策です。
+
+また、bot は Communication Mod が返すエラー応答を通常のゲーム状態として扱わず、エラーメッセージを含む例外として記録するようにしています。これにより、`in_game` キーがないエラー応答で `KeyError` になるのを防ぎ、停止理由をログから確認できます。
+
 ## 戦略を試すときのメモ
 
 ### Ironclad: `REQUESTED_STRIKE`
