@@ -16,7 +16,7 @@ run_seeds = [
     #'LGZ12EEMFGUK',
 ]
 run_amount = 1
-strategy = REQUESTED_STRIKE
+strategy = SHIVS_AND_GIGGLES
 
 if __name__ == "__main__":
     init_log()
